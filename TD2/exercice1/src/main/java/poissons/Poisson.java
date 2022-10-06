@@ -3,11 +3,16 @@ package poissons;
 
 import mare.Mare;
 import mare.PoissonOutOfBoundException;
+import observateur.Observateur;
 import poissons.comportements.ComportementDeplacement;
 import poissons.comportements.ComportementDeplacementMort;
 import poissons.comportements.ComportementDeplacementNormal;
+import sujet.Sujet;
 
-public class Poisson {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Poisson implements Sujet {
     public Mare getMare() {
         return mare;
     }
@@ -47,6 +52,10 @@ public class Poisson {
      */
     private int sensDeplacement;
 
+    private List<Observateur> observateurs;
+
+    private boolean estMort;
+
     public Poisson(int x, int y, Mare mare) {
         this.x = x;
         this.y = y;
@@ -59,8 +68,20 @@ public class Poisson {
             this.comportementDeplacement = new ComportementDeplacementMort();
         }
         this.mare = mare;
+        this.observateurs = new ArrayList();
+        this.estMort = false;
     }
 
+    public boolean isEstMort() {
+        return estMort;
+    }
+
+    public void setEstMort(boolean estMort) {
+        this.estMort = estMort;
+        if (this.estMort){
+            notifierObservateurs();
+        }
+    }
 
     public void setMare(Mare mare) {
         this.mare = mare;
@@ -99,5 +120,25 @@ public class Poisson {
                 ", sensDeplacement=" + sensDeplacement +
                 ", algoDeplacement=" + comportementDeplacement +
                 '}';
+    }
+
+    @Override
+    public void enregistrerObservateur(Observateur o) {
+        observateurs.add(o);
+    }
+
+    @Override
+    public void supprimerObservateur(Observateur o) {
+        int i = observateurs.indexOf(o);
+        if (i >= 0) {
+            observateurs.remove(i);
+        }
+    }
+
+    @Override
+    public void notifierObservateurs() {
+        for (Observateur o : observateurs) {
+            o.actualiser(this);
+        }
     }
 }

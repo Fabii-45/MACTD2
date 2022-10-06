@@ -1,6 +1,7 @@
 package facade;
 
 import mare.Mare;
+import observateur.AffichageKills;
 import poissons.Poisson;
 
 import java.util.ArrayList;
@@ -31,13 +32,14 @@ public class FacadeMare {
      */
     public void creerMare(int dimXMare, int dimYMare, int nbPoissons) {
         this.maMare = new Mare(dimXMare,dimYMare);
+
         for (int i =0;i<nbPoissons;i++) {
             int posx=(int)(dimXMare*Math.random());
             int posy=(int)(dimYMare*Math.random());
             /**
              * Cela peut sembler bizarre comme instruction, mais lors de sa création, le poisson s'inscrit dans la mare.
              */
-            new Poisson(posx,posy,maMare);
+            new AffichageKills(new Poisson(posx,posy,maMare));
         }
         this.activiteMare = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
@@ -70,15 +72,11 @@ public class FacadeMare {
     public void gelerMare() throws InterruptedException {
         this.activiteMare.interrupt();
         this.activiteMare.join();
-
-
     }
-
 
     public Collection<Poisson> getMaMare() {
         return maMare.getPoissons();
     }
-
 
     public Collection<Poisson> lancerGrenade(Grenade grenade) {
         return grenade.exploser(this.maMare);

@@ -29,6 +29,7 @@ public class Grenade {
                     Math.pow(rayon,2)) {
                 poisson.setComportementDeplacement(
                         new ComportementDeplacementMort());
+                poisson.setEstMort(true);
                 victimes.add(poisson);
             }
         }
